@@ -4,11 +4,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 # Re-exports Base so files like main.py can do:
-#   from core.database import Base, engine
+#   from blogs.core.database import Base, engine
 # to create all database tables in one clean place without having
-# to import from both common.models.base and core.database.
-from common.models.base import Base
-from core.configuration.config import settings
+# to import from both blogs.common.models.base and blogs.core.database.
+from blogs.common.models.base import Base
+from blogs.core.configuration.config import settings
 
 # Read the database URL from application settings.
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
@@ -26,13 +26,12 @@ SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     echo=True,  # Print generated SQL statements in the terminal.
-        # --- Connection Pool Settings ---
+    # --- Connection Pool Settings ---
     pool_size=10,  # 1. Keep up to 10 persistent connections always ready
     max_overflow=20,  # 2. Allow up to 20 temporary extra connections during traffic spikes (Total max = 30)
     pool_timeout=30,  # 3. Wait up to 30 seconds for a connection to free up before throwing a TimeoutError
     pool_recycle=1800,  # 4. Re-create connections after 30 minutes to avoid stale timeouts from PostgreSQL
 )
-
 
 
 # Provide a database session to FastAPI endpoints.

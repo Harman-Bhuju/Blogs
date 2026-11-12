@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from blogs.core.database import get_db
 from blogs.posts.models import Post
-from core.database import get_db
 
 router = APIRouter()
 
