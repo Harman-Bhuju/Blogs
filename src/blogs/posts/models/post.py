@@ -3,14 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlalchemy import ForeignKey, String, Text
+from sqlalchemy import ForeignKey, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from blogs.common.models.base import BaseModel
 
-# Import related models only during static type checking.
-# This prevents circular import errors at runtime while still
-# giving your IDE and type checker full autocomplete for relationships.
+# TYPE_CHECKING is True only for type linters/IDEs, never at runtime.
+# This prevents circular import errors between related models.
 if TYPE_CHECKING:
     from blogs.comments.models.comment import Comment
     from blogs.tags.models.tag import PostTag
@@ -20,67 +19,26 @@ if TYPE_CHECKING:
 class Post(BaseModel):
     __tablename__ = "posts"
 
-    # Note: id (UUID), created_at, and updated_at are inherited from BaseModel.
-
-    # Post title, limited to 100 characters.
+    # id (UUID), created_at, and updated_at are inherited from BaseModel.
     title: Mapped[str] = mapped_column(String(100))
-
-    # Post content, suitable for long articles.
     content: Mapped[str] = mapped_column(Text)
-
-    # Optional rating for the post (nullable by default).
     rating: Mapped[int | None] = mapped_column(default=None)
+    published: Mapped[bool] = mapped_column(server_default=text("true"))
 
-    # Whether the post is published and visible to readers.
-    published: Mapped[bool] = mapped_column(default=True)
-
-    # Foreign key referencing the 'id' column in the 'users' table.
-    # Since User.id is a UUID (from BaseModel), author_id must also be UUID.
+    # Foreign key referencing users.id (UUID).
     author_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
 
-
-    # 1. Many-to-One: Post -> User (Author)
-    #
-    # How back_populates works:
-    #   back_populates="posts" mirrors User.posts.
-    #   Whenever post.author is assigned, SQLAlchemy automatically updates
-    #   the author's 'posts' collection in memory.
-    #
-    # How to get relationship data:
-    #   post = db.query(Post).filter(Post.id == post_id).first()
-    #   # Get the author user object directly:
-    #   print(post.author.name, post.author.email)
-    #
-    #   Tip: To fetch the post AND its author in a single SQL JOIN:
-    #   from sqlalchemy.orm import joinedload
-    #   post = db.query(Post).options(joinedload(Post.author)).first()
+    # 1. Many Posts belong to One User (Author).
+    # back_populates="posts" links Post.author <-> User.posts.
+    # How to use: post.author gives the User object who wrote this post.
     author: Mapped[User] = relationship(back_populates="posts")
 
-    # 2. One-to-Many: Post -> Comments
-    #
-    # How back_populates works:
-    #   back_populates="post" links Post.comments to Comment.post.
-    #
-    # How to get relationship data:
-    #   post = db.query(Post).first()
-    #   # Access all comments attached to this post:
-    #   for comment in post.comments:
-    #       print(comment.content, "by user:", comment.user.name)
-    #
-    #   Tip: Eager-load comments:
-    #   from sqlalchemy.orm import selectinload
-    #   post = db.query(Post).options(selectinload(Post.comments)).first()
+    # 2. One Post has Many Comments.
+    # back_populates="post" links Post.comments <-> Comment.post.
+    # How to use: post.comments gives a list of all Comment objects on this post.
     comments: Mapped[list[Comment]] = relationship(back_populates="post")
 
-    # 3. One-to-Many: Post -> PostTag (Junction Table)
-    #
-    # How back_populates works:
-    #   back_populates="post" connects Post.post_tags to PostTag.post.
-    #   PostTag holds the link between Post and Tag.
-    #
-    # How to get relationship data:
-    #   post = db.query(Post).first()
-    #   # Access all tags on this post through the junction table:
-    #   for post_tag in post.post_tags:
-    #       print("Tag name:", post_tag.tag.name)
+    # 3. One Post has Many Tags (via junction table PostTag).
+    # back_populates="post" links Post.post_tags <-> PostTag.post.
+    # How to use: [pt.tag for pt in post.post_tags] gives the tags on this post.
     post_tags: Mapped[list[PostTag]] = relationship(back_populates="post")
