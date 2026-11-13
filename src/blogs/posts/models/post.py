@@ -23,7 +23,7 @@ class Post(BaseModel):
     title: Mapped[str] = mapped_column(String(100))
     content: Mapped[str] = mapped_column(Text)
     rating: Mapped[int | None] = mapped_column(default=None)
-    published: Mapped[bool] = mapped_column(server_default=text("true"))
+    published: Mapped[bool] = mapped_column(server_default=text("true"), default = True)
 
     # Foreign key referencing users.id (UUID).
     author_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
