@@ -1,24 +1,32 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+
+# Import all models so that Base.metadata contains all tables for autogenerate.
+from blogs.comments.models import Comment  # noqa: F401
+from blogs.common.models.base import Base
+from blogs.core.config import settings
+from blogs.posts.models import Post  # noqa: F401
+from blogs.tags.models import PostTag, Tag  # noqa: F401
+from blogs.users.models import User  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# Dynamically set the database URL from our Pydantic settings (.env).
+# This avoids hardcoding passwords in alembic.ini.
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+# Provide the MetaData object for 'autogenerate' support.
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -61,6 +69,7 @@ def run_migrations_online() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        # A migration is a short-lived script that runs once and exits. We don't want or need connection pooling (keeping idle connections alive); NullPool opens a connection, executes the migration, and immediately closes it.
     )
 
     with connectable.connect() as connection:

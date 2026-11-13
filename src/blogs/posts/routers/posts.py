@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from blogs.core.database import get_db
 from blogs.posts.models import Post
 
-router = APIRouter()
+router = APIRouter(prefix="/posts", tags=["posts"])
+
 
 # Reusable database dependency type.
 DbSession = Annotated[Session, Depends(get_db)]
