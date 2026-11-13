@@ -8,28 +8,16 @@ from blogs.features.users.models import User
 
 
 def register_models() -> None:
-    """Ensure all SQLAlchemy models are registered and their relationships configured.
+    """Load all database models and connect their relationships.
 
-    Why this is needed:
-    1. Import Registration:
-       The imports above (Comment, Post, Tag, PostTag, User) execute the class
-       definitions so that SQLAlchemy's DeclarativeBase becomes aware of all tables.
+    How this works:
+    1. Importing the models above (User, Post, Tag, PostTag, Comment) loads them into Python.
+    2. configure_mappers() tells SQLAlchemy to connect all the relationships between them
+       (for example, linking Post.author to User.posts).
 
-    2. configure_mappers():
-       SQLAlchemy relationships use 'Two-Phase Mapping'. When model classes are first
-       loaded, relationships defined with string targets (e.g. Mapped['User']) are
-       stored as pending references.
-       
-       Calling configure_mappers():
-       - Traverses all registered models.
-       - Resolves all string references to their actual Python classes.
-       - Verifies foreign keys and matches two-way back_populates declarations.
-       - Wires relationship properties in memory before any database query runs.
-       
-       By calling this explicitly at application startup (in main.py) and in Alembic
-       (in env.py), any missing model imports, typos, or relationship misconfigurations
-       will fail fast immediately on launch with a clear error stack, rather than
-       failing lazily during a live user request in production.
+    Why we do this at startup:
+    If a model is missing or a relationship name has a typo, this will catch the error
+    immediately when the app starts — instead of crashing later when a user makes a request!
     """
     configure_mappers()
 
