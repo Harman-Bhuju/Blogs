@@ -17,9 +17,13 @@ DbSession = Annotated[Session, Depends(get_db)]
 # It tells fastAPI before running this route, call get_db() and give me whatever it returns/yields.
 
 
-@router.get("/posts")
+@router.get("/")
 def get_posts(db: DbSession):
 
     posts = db.query(Post).all()
 
     return posts
+
+
+# @router.post("/")
+# def create_post(post: Post, db: DbSession):

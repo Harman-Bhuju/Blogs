@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 
-from blogs.comments.routers.comments import router as comments_router
-from blogs.posts.routers.posts import router as posts_router
+from blogs.comments.routers.comment import router as comments_router
+from blogs.posts.routers.post import router as posts_router
 from blogs.tags.routers.tags import router as tags_router
-from blogs.users.routers.users import router as users_router
+from blogs.users.routers.user import router as users_router
 
 app = FastAPI(title="Blogs API")
 
