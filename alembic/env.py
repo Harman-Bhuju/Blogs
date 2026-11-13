@@ -3,14 +3,8 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-
-# Import all models so that Base.metadata contains all tables for autogenerate.
-from blogs.comments.models import Comment  # noqa: F401
-from blogs.common.models.base import Base
 from blogs.core.config import settings
-from blogs.posts.models import Post  # noqa: F401
-from blogs.tags.models import PostTag, Tag  # noqa: F401
-from blogs.users.models import User  # noqa: F401
+from blogs.models import BaseModel, register_models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -25,8 +19,11 @@ config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+# Ensure all ORM models are loaded and registered before getting metadata.
+register_models()
+
 # Provide the MetaData object for 'autogenerate' support.
-target_metadata = Base.metadata
+target_metadata = BaseModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

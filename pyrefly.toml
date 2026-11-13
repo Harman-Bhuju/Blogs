@@ -1,0 +1,7 @@
+preset = "basic"
+search-path = ["src"]
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
+]
+

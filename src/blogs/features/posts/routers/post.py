@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from blogs.core.database import get_db
-from blogs.posts.models import Post
+from blogs.features.posts.models import Post
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 

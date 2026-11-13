@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session, sessionmaker
 # Re-exports Base so files like main.py can do:
 #   from blogs.core.database import Base, engine
 # to create all database tables in one clean place without having
-# to import from both blogs.common.models.base and blogs.core.database.
-from blogs.common.models.base import Base
+# to import from both blogs.common.models and blogs.core.database.
+from blogs.common.models import Base
 from blogs.core.config import settings
 
 # Read the database URL from application settings.

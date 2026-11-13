@@ -5,8 +5,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from blogs.core.database import get_db
-from blogs.users.models import User as UserModel
-from blogs.users.schemas import User as UserSchema
+from blogs.features.users.models import User as UserModel
+from blogs.features.users.schemas import User as UserSchema
 
 router = APIRouter(prefix="/users", tags=["users"])
 

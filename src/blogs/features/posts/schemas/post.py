@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.experimental.missing_sentinel import MISSING
 
-from blogs.users.schemas import User
+from blogs.features.users.schemas import User
 
 
 # Common fields inherited by other post models.

@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 
-from blogs.comments.routers.comment import router as comments_router
-from blogs.posts.routers.post import router as posts_router
-from blogs.tags.routers.tags import router as tags_router
-from blogs.users.routers.user import router as users_router
+from blogs.features.comments.routers.comment import router as comments_router
+from blogs.features.posts.routers.post import router as posts_router
+from blogs.features.tags.routers.tags import router as tags_router
+from blogs.features.users.routers.user import router as users_router
+from blogs.models import register_models
+
+# Ensure all SQLAlchemy models and mappers are configured at application startup.
+register_models()
 
 app = FastAPI(title="Blogs API")
 

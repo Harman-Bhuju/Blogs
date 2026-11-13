@@ -6,12 +6,12 @@ from uuid import UUID
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from blogs.common.models.base import BaseModel
+from blogs.common.models import BaseModel
 
 # TYPE_CHECKING is True only for type linters/IDEs, never at runtime.
 # This prevents circular import errors between related models.
 if TYPE_CHECKING:
-    from blogs.posts.models.post import Post
+    from blogs.features.posts.models import Post
 
 
 class Tag(BaseModel):
