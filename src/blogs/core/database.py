@@ -26,11 +26,11 @@ SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     echo=settings.DB_LOGGING,  # Print SQL queries when DB_LOGGING=true in .env
-    # --- Connection Pool Settings ---
-    pool_size=10,  # 1. Keep up to 10 persistent connections always ready
-    max_overflow=20,  # 2. Allow up to 20 temporary extra connections during traffic spikes (Total max = 30)
-    pool_timeout=30,  # 3. Wait up to 30 seconds for a connection to free up before throwing a TimeoutError
-    pool_recycle=1800,  # 4. Re-create connections after 30 minutes to avoid stale timeouts from PostgreSQL
+    # --- Connection Pool Settings (loaded from .env via settings) ---
+    pool_size=settings.DB_POOL_SIZE,  # 1. Keep up to X(10) persistent connections always ready
+    max_overflow=settings.DB_MAX_OVERFLOW,  # 2. Allow up to X(20) temporary extra connections during traffic spikes (Total max = 30)
+    pool_timeout=settings.DB_POOL_TIMEOUT,  # 3. Wait up to X(30) seconds for a connection to free up before throwing a TimeoutError
+    pool_recycle=settings.DB_POOL_RECYCLE,  # 4. Re-create connections after X(1800) minutes to avoid stale timeouts from PostgreSQL
 )
 
 # SessionLocal is a factory that generates pre-configured Session objects.
